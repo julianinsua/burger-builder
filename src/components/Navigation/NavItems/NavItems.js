@@ -1,19 +1,15 @@
-import React from 'react';
+import React from "react";
 import classes from "./NavItems.module.css";
 import NavItem from "../Navitem/NavItem";
 
 export const NavItems = (props) => {
-    return (
-        <ul className = {classes.NavItems}>
-            <NavItem link = "/" active>
-                Burger Builder
-            </NavItem>
+	return (
+		<ul className={classes.NavItems}>
+			<NavItem link='/'>Burger Builder</NavItem>
 
-            <NavItem link = "/" >
-                Checkout
-            </NavItem>
-        </ul>
-    )
-}
+			<NavItem link='/orders'>Orders</NavItem>
+		</ul>
+	);
+};
 
 export default NavItems;

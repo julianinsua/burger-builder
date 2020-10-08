@@ -10,7 +10,8 @@
     "react-dom": "^16.13.1",
     "react-scripts": "3.4.3",
     "prop-types": "15.7.2",
-    "axios": "0.20.0"
+    "axios": "0.20.0",
+    "react-router-dom": "5.2.0"
   },
   "scripts": {
     "start": "react-scripts start",
