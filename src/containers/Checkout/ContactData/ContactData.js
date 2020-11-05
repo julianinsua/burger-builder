@@ -4,8 +4,9 @@ import classes from "./ContactData.module.css";
 import axios from "../../../axios-orders";
 import Input from "../../../components/UI/Input/Input";
 import Spinner from "../../../components/UI/Spinner/Spinner";
+import { connect } from "react-redux";
 
-export default class ContactData extends Component {
+class ContactData extends Component {
 	state = {
 		orderForm: {
 			name: {
@@ -16,6 +17,7 @@ export default class ContactData extends Component {
 					required: true,
 				},
 				valid: false,
+				touched: false,
 			},
 			street: {
 				elementType: "input",
@@ -25,6 +27,7 @@ export default class ContactData extends Component {
 					required: true,
 				},
 				valid: false,
+				touched: false,
 			},
 			zipCode: {
 				elementType: "input",
@@ -32,8 +35,11 @@ export default class ContactData extends Component {
 				value: "",
 				validation: {
 					required: true,
+					minLength: 4,
+					maxLength: 6,
 				},
 				valid: false,
+				touched: false,
 			},
 			country: {
 				elementType: "input",
@@ -43,6 +49,7 @@ export default class ContactData extends Component {
 					required: true,
 				},
 				valid: false,
+				touched: false,
 			},
 			email: {
 				elementType: "input",
@@ -52,6 +59,7 @@ export default class ContactData extends Component {
 					required: true,
 				},
 				valid: false,
+				touched: false,
 			},
 			deliveryMethod: {
 				elementType: "select",
@@ -61,9 +69,15 @@ export default class ContactData extends Component {
 						{ value: "cheapest", displayValue: "Cheapest" },
 					],
 				},
-				value: "",
+				value: "fastest",
+				validation: {
+					required: false,
+				},
+				valid: true,
+				touched: false,
 			},
 		},
+		formIsValid: false,
 		loading: false,
 	};
 
@@ -79,7 +93,7 @@ export default class ContactData extends Component {
 		}
 
 		const order = {
-			ingredients: this.props.ingredients,
+			ingredients: this.props.ings,
 			price: this.props.price,
 			orderData: formData,
 		};
@@ -94,9 +108,17 @@ export default class ContactData extends Component {
 	};
 
 	checkValidity = (value, rules) => {
-		let isValid = false;
+		let isValid = true;
 		if (rules.required) {
-			isValid = value.trim() !== "";
+			isValid = value.trim() !== "" && isValid;
+		}
+
+		if (rules.minLength) {
+			isValid = value.length >= rules.minLength && isValid;
+		}
+
+		if (rules.maxLength) {
+			isValid = value.length <= rules.maxLength && isValid;
 		}
 
 		return isValid;
@@ -110,10 +132,15 @@ export default class ContactData extends Component {
 			updatedFormElement.value,
 			updatedFormElement.validation
 		);
+		updatedFormElement.touched = true;
 
 		updatedOrderForm[inputIdentifier] = updatedFormElement;
-		console.log(updatedFormElement);
-		this.setState({ orderForm: updatedOrderForm });
+		let formIsValid = true;
+		for (let inputIdentifier in updatedOrderForm) {
+			formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
+		}
+
+		this.setState({ orderForm: updatedOrderForm, formIsValid: formIsValid });
 	};
 
 	render() {
@@ -135,9 +162,15 @@ export default class ContactData extends Component {
 						elementConfig={formElement.config.elementConfig}
 						value={formElement.config.value}
 						changed={(event) => this.inputChangedHandler(event, formElement.id)}
+						invalid={!formElement.config.valid}
+						touched={formElement.config.touched}
 					/>
 				))}
-				<Button btnType='Success' clicked={this.orderHandler}>
+				<Button
+					btnType='Success'
+					clicked={this.orderHandler}
+					disabled={!this.state.formIsValid}
+				>
 					ORDER
 				</Button>
 			</form>
@@ -155,3 +188,12 @@ export default class ContactData extends Component {
 		);
 	}
 }
+
+const mapStateToProps = (state) => {
+	return {
+		ings: state.ingredients,
+		price: state.totalPrice
+	};
+};
+
+export default connect(mapStateToProps) (ContactData)
