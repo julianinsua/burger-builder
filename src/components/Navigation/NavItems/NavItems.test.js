@@ -8,8 +8,18 @@ import NavItem from "../Navitem/NavItem";
 configure({ adapter: new Adapter() });
 
 describe("<NavigationItems />", () => {
+	let wrapper;
+	beforeEach(() => {
+		wrapper = shallow(<NavItems />);
+	});
+
 	it("should render 2 <NavItem /> if not authenticated", () => {
-		const wrapper = shallow(<NavItems />);
-		expect(wrapper.find(<NavItem />));
+		expect(wrapper.find(NavItem)).toHaveLength(2);
+	});
+
+	it("should render 3 <NavItem /> if authenticated", () => {
+		// wrapper = shallow(<NavItems isAuth />);
+		wrapper.setProps({ isAuth: true });
+		expect(wrapper.find(NavItem)).toHaveLength(3);
 	});
 });
