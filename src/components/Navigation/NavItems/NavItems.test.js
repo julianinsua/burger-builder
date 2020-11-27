@@ -22,4 +22,12 @@ describe("<NavigationItems />", () => {
 		wrapper.setProps({ isAuth: true });
 		expect(wrapper.find(NavItem)).toHaveLength(3);
 	});
+
+	it("should render a Link with '/logout'", () => {
+		// wrapper = shallow(<NavItems isAuth />);
+		wrapper.setProps({ isAuth: true });
+		expect(wrapper.contains(<NavItem link='/logout'>Logout</NavItem>)).toEqual(
+			true
+		);
+	});
 });
